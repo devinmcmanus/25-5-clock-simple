@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowUp,
@@ -23,9 +23,21 @@ function App() {
   const [timerState, setTimerState] = useState<TimerState>({
     state: "initial",
   });
+  const intervalRef = useRef<NodeJS.Timer>(null);
   const timerIcon = timerState.state === "running" ? faPause : faPlay;
 
   function handleStartStop() {
+    if (timerState.state !== "paused") {
+      const id = intervalRef.current;
+      clearInterval(id);
+    } else {
+      const id = setInterval(() => {
+        console.log("tick");
+      }, 1000);
+
+      intervalRef.current = id;
+    }
+
     setTimerState((prevState) =>
       prevState.state !== "running" ? { state: "running" } : { state: "paused" }
     );
