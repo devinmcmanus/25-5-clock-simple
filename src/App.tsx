@@ -7,6 +7,7 @@ import {
   faRepeat,
 } from "@fortawesome/free-solid-svg-icons";
 import "./App.css";
+import Button from "./components/Button";
 
 function App() {
   return (
@@ -18,23 +19,15 @@ function App() {
             Break Length
           </h2>
           <div className="flex items-center justify-center gap-2">
-            <button
-              type="button"
-              id="break-decrement"
-              className="cursor-pointer"
-            >
+            <Button id="break-decrement">
               <FontAwesomeIcon icon={faArrowUp} size="xl" />
-            </button>
+            </Button>
             <span id="break-length" className="text-2xl">
               5
             </span>
-            <button
-              type="button"
-              id="break-increment"
-              className="cursor-pointer"
-            >
+            <Button id="break-increment">
               <FontAwesomeIcon icon={faArrowDown} size="xl" />
-            </button>
+            </Button>
           </div>
         </div>
         <div>
@@ -42,23 +35,15 @@ function App() {
             Session Length
           </h2>
           <div className="flex items-center justify-center gap-2">
-            <button
-              type="button"
-              id="session-decrement"
-              className="cursor-pointer"
-            >
+            <Button id="session-decrement">
               <FontAwesomeIcon icon={faArrowUp} size="xl" />
-            </button>
+            </Button>
             <span id="session-length" className="text-2xl">
               25
             </span>
-            <button
-              type="button"
-              id="session-increment"
-              className="cursor-pointer"
-            >
+            <Button id="session-increment">
               <FontAwesomeIcon icon={faArrowDown} size="xl" />
-            </button>
+            </Button>
           </div>
         </div>
       </section>
@@ -71,13 +56,13 @@ function App() {
         </h3>
       </section>
       <section className="mt-1 flex gap-2">
-        <button type="button" id="start_stop" className="cursor-pointer">
+        <Button id="start_stop">
           <FontAwesomeIcon icon={faPlay} size="xl" />
           <FontAwesomeIcon icon={faPause} size="xl" />
-        </button>
-        <button type="button" id="reset" className="cursor-pointer">
+        </Button>
+        <Button id="reset">
           <FontAwesomeIcon icon={faRepeat} size="xl" />
-        </button>
+        </Button>
       </section>
     </main>
   );
