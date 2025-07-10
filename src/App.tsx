@@ -14,6 +14,8 @@ function App() {
   return (
     <main className="flex h-screen flex-col items-center justify-center dark:bg-zinc-900 dark:text-gray-50">
       <h1 className="text-5xl font-bold">25 + 5 Clock</h1>
+
+      {/* Session and Break Controls */}
       <section className="mt-4 flex items-center justify-center gap-7">
         <div>
           <SectionLabel id="break-label">Break Length</SectionLabel>
@@ -44,12 +46,16 @@ function App() {
           </div>
         </div>
       </section>
+
+      {/* Timer Display */}
       <section className="mt-3 flex flex-col items-center justify-center rounded-3xl border-4 px-6 pt-3 pb-5">
         <SectionLabel id="timer-label">Session</SectionLabel>
         <h3 id="time-left" className="text-7xl font-bold">
           25:00
         </h3>
       </section>
+
+      {/* Timer Controls */}
       <section className="mt-1 flex gap-2">
         <Button id="start_stop">
           <FontAwesomeIcon icon={faPlay} size="xl" />
