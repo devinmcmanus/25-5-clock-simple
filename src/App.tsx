@@ -23,7 +23,7 @@ function App() {
   const [timerState, setTimerState] = useState<TimerState>({
     state: "initial",
   });
-  const timeRemainingRef = useRef(sessionLength * 1000);
+  const timeRemainingRef = useRef(sessionLength * 1000 * 60);
   const intervalRef = useRef<NodeJS.Timer>(null);
   const timerIcon = timerState.state === "running" ? faPause : faPlay;
 
@@ -59,11 +59,28 @@ function App() {
   }
 
   function handleChangeBreakLength(delta: number) {
-    setBreakLength(breakLength + delta);
+    const newBreakLength = breakLength + delta;
+    setBreakLength(
+      newBreakLength > 0 && newBreakLength <= 60 ? newBreakLength : breakLength
+    );
   }
 
   function handleChangeSessionLength(delta: number) {
-    setSessionLength(sessionLength + delta);
+    const newSessionLength = sessionLength + delta;
+    setSessionLength(
+      newSessionLength > 0 && newSessionLength <= 60
+        ? newSessionLength
+        : sessionLength
+    );
+  }
+
+  function formatMmSs(t: number) {
+    const tAsDate = new Date(t);
+    const minutes = String(tAsDate.getMinutes()).padStart(2, "0");
+    const seconds = String(tAsDate.getSeconds()).padStart(2, "0");
+    const tFormatted = `${minutes}:${seconds}`;
+
+    return tFormatted;
   }
 
   return (
@@ -118,7 +135,7 @@ function App() {
       <section className="mt-3 flex flex-col items-center justify-center rounded-3xl border-4 px-6 pt-3 pb-5">
         <SectionLabel id="timer-label">Session</SectionLabel>
         <h3 id="time-left" className="text-7xl font-bold">
-          25:00
+          {formatMmSs(timeRemainingRef.current)}
         </h3>
       </section>
 
