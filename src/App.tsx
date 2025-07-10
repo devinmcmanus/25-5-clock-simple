@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowUp,
@@ -11,6 +12,9 @@ import Button from "./components/Button";
 import SectionLabel from "./components/SectionLabel";
 
 function App() {
+  const [breakLength, setBreakLength] = useState(5);
+  const [sessionLength, setSessionLength] = useState(25);
+
   return (
     <main className="flex h-screen flex-col items-center justify-center dark:bg-zinc-900 dark:text-gray-50">
       <h1 className="text-5xl font-bold">25 + 5 Clock</h1>
@@ -24,7 +28,7 @@ function App() {
               <FontAwesomeIcon icon={faArrowUp} size="xl" />
             </Button>
             <span id="break-length" className="text-2xl">
-              5
+              {breakLength}
             </span>
             <Button id="break-increment">
               <FontAwesomeIcon icon={faArrowDown} size="xl" />
@@ -38,7 +42,7 @@ function App() {
               <FontAwesomeIcon icon={faArrowUp} size="xl" />
             </Button>
             <span id="session-length" className="text-2xl">
-              25
+              {sessionLength}
             </span>
             <Button id="session-increment">
               <FontAwesomeIcon icon={faArrowDown} size="xl" />
