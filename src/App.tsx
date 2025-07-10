@@ -11,9 +11,25 @@ import "./App.css";
 import Button from "./components/Button";
 import SectionLabel from "./components/SectionLabel";
 
+type TimerState =
+  | { state: "initial" }
+  | { state: "running" }
+  | { state: "paused" }
+  | { state: "error" };
+
 function App() {
   const [breakLength, setBreakLength] = useState(5);
   const [sessionLength, setSessionLength] = useState(25);
+  const [timerState, setTimerState] = useState<TimerState>({
+    state: "initial",
+  });
+  const timerIcon = timerState.state === "running" ? faPause : faPlay;
+
+  function handleStartStop() {
+    setTimerState((prevState) =>
+      prevState.state !== "running" ? { state: "running" } : { state: "paused" }
+    );
+  }
 
   return (
     <main className="flex h-screen flex-col items-center justify-center dark:bg-zinc-900 dark:text-gray-50">
@@ -62,8 +78,11 @@ function App() {
       {/* Timer Controls */}
       <section className="mt-1 flex gap-2">
         <Button id="start_stop">
-          <FontAwesomeIcon icon={faPlay} size="xl" />
-          <FontAwesomeIcon icon={faPause} size="xl" />
+          <FontAwesomeIcon
+            icon={timerIcon}
+            size="xl"
+            onClick={handleStartStop}
+          />
         </Button>
         <Button id="reset">
           <FontAwesomeIcon icon={faRepeat} size="xl" />
