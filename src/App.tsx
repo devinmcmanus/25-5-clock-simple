@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowUp,
@@ -26,18 +26,34 @@ function App() {
   const intervalRef = useRef<NodeJS.Timer>(null);
   const timerIcon = timerState.state === "running" ? faPause : faPlay;
 
-  function handleStartStop() {
-    if (timerState.state !== "paused") {
-      const id = Number(intervalRef.current);
-      clearInterval(id);
-    } else {
+  useEffect(() => {
+    let timeRemaining = 25 * 1000;
+
+    function startTimer() {
       const id = setInterval(() => {
-        console.log("tick");
+        console.log(timeRemaining, intervalRef.current);
+        timeRemaining--;
       }, 1000);
 
       intervalRef.current = id;
     }
 
+    function stopTimer() {
+      clearInterval(Number(intervalRef.current));
+    }
+
+    console.log(timerState.state);
+
+    if (timerState.state === "paused") {
+      stopTimer();
+    }
+
+    if (timerState.state === "running") {
+      startTimer();
+    }
+  }, [timerState.state]);
+
+  function handleStartStop() {
     setTimerState((prevState) =>
       prevState.state !== "running" ? { state: "running" } : { state: "paused" }
     );
