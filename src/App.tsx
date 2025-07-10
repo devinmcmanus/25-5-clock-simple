@@ -23,16 +23,15 @@ function App() {
   const [timerState, setTimerState] = useState<TimerState>({
     state: "initial",
   });
+  const timeRemainingRef = useRef(sessionLength * 1000);
   const intervalRef = useRef<NodeJS.Timer>(null);
   const timerIcon = timerState.state === "running" ? faPause : faPlay;
 
   useEffect(() => {
-    let timeRemaining = 25 * 1000;
-
     function startTimer() {
       const id = setInterval(() => {
-        console.log(timeRemaining, intervalRef.current);
-        timeRemaining--;
+        console.log(timeRemainingRef.current, intervalRef.current);
+        timeRemainingRef.current = timeRemainingRef.current - 1;
       }, 1000);
 
       intervalRef.current = id;
@@ -59,6 +58,14 @@ function App() {
     );
   }
 
+  function handleChangeBreakLength(delta: number) {
+    setBreakLength(breakLength + delta);
+  }
+
+  function handleChangeSessionLength(delta: number) {
+    setSessionLength(sessionLength + delta);
+  }
+
   return (
     <main className="flex h-screen flex-col items-center justify-center dark:bg-zinc-900 dark:text-gray-50">
       <h1 className="text-5xl font-bold">25 + 5 Clock</h1>
@@ -68,28 +75,40 @@ function App() {
         <div>
           <SectionLabel id="break-label">Break Length</SectionLabel>
           <div className="flex items-center justify-center gap-2">
-            <Button id="break-decrement">
-              <FontAwesomeIcon icon={faArrowUp} size="xl" />
+            <Button
+              id="break-decrement"
+              onClick={() => handleChangeBreakLength(-1)}
+            >
+              <FontAwesomeIcon icon={faArrowDown} size="xl" />
             </Button>
             <span id="break-length" className="text-2xl">
               {breakLength}
             </span>
-            <Button id="break-increment">
-              <FontAwesomeIcon icon={faArrowDown} size="xl" />
+            <Button
+              id="break-increment"
+              onClick={() => handleChangeBreakLength(1)}
+            >
+              <FontAwesomeIcon icon={faArrowUp} size="xl" />
             </Button>
           </div>
         </div>
         <div>
           <SectionLabel id="session-label">Session Length</SectionLabel>
           <div className="flex items-center justify-center gap-2">
-            <Button id="session-decrement">
-              <FontAwesomeIcon icon={faArrowUp} size="xl" />
+            <Button
+              id="session-decrement"
+              onClick={() => handleChangeSessionLength(-1)}
+            >
+              <FontAwesomeIcon icon={faArrowDown} size="xl" />
             </Button>
             <span id="session-length" className="text-2xl">
               {sessionLength}
             </span>
-            <Button id="session-increment">
-              <FontAwesomeIcon icon={faArrowDown} size="xl" />
+            <Button
+              id="session-increment"
+              onClick={() => handleChangeSessionLength(1)}
+            >
+              <FontAwesomeIcon icon={faArrowUp} size="xl" />
             </Button>
           </div>
         </div>
