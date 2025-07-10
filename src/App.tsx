@@ -28,7 +28,7 @@ function App() {
 
   function handleStartStop() {
     if (timerState.state !== "paused") {
-      const id = intervalRef.current;
+      const id = Number(intervalRef.current);
       clearInterval(id);
     } else {
       const id = setInterval(() => {
