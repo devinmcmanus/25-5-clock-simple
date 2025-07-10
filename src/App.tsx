@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "./App.css";
 import Button from "./components/Button";
+import SectionLabel from "./components/SectionLabel";
 
 function App() {
   return (
@@ -15,9 +16,7 @@ function App() {
       <h1 className="text-5xl font-bold">25 + 5 Clock</h1>
       <section className="mt-4 flex items-center justify-center gap-7">
         <div>
-          <h2 id="break-label" className="text-2xl font-bold">
-            Break Length
-          </h2>
+          <SectionLabel id="break-label">Break Length</SectionLabel>
           <div className="flex items-center justify-center gap-2">
             <Button id="break-decrement">
               <FontAwesomeIcon icon={faArrowUp} size="xl" />
@@ -31,9 +30,7 @@ function App() {
           </div>
         </div>
         <div>
-          <h2 id="session-label" className="text-2xl font-bold">
-            Session Length
-          </h2>
+          <SectionLabel id="session-label">Session Length</SectionLabel>
           <div className="flex items-center justify-center gap-2">
             <Button id="session-decrement">
               <FontAwesomeIcon icon={faArrowUp} size="xl" />
@@ -48,9 +45,7 @@ function App() {
         </div>
       </section>
       <section className="mt-3 flex flex-col items-center justify-center rounded-3xl border-4 px-6 pt-3 pb-5">
-        <h2 id="timer-label" className="text-2xl font-bold">
-          Session
-        </h2>
+        <SectionLabel id="timer-label">Session</SectionLabel>
         <h3 id="time-left" className="text-7xl font-bold">
           25:00
         </h3>
