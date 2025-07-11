@@ -23,36 +23,41 @@ function App() {
   const [timerState, setTimerState] = useState<TimerState>({
     state: "initial",
   });
-  const timeRemainingRef = useRef(sessionLength * 1000 * 60);
+  const [timeRemaining, setTimeRemaining] = useState(sessionLength * 60);
   const intervalRef = useRef<NodeJS.Timer>(null);
   const timerIcon = timerState.state === "running" ? faPause : faPlay;
+  const minutes = Math.floor(timeRemaining / 60)
+    .toString()
+    .padStart(2, "0");
+  const seconds = Math.floor(timeRemaining % 60)
+    .toString()
+    .padStart(2, "0");
+  const timeRemainingFormatted = `${minutes}:${seconds}`;
 
   useEffect(() => {
     function startTimer() {
       const id = setInterval(() => {
-        console.log(timeRemainingRef.current, intervalRef.current);
-        timeRemainingRef.current = timeRemainingRef.current - 1;
+        setTimeRemaining((t) => t - 1);
       }, 1000);
 
       intervalRef.current = id;
     }
 
-    function stopTimer() {
+    function pauseTimer() {
       clearInterval(Number(intervalRef.current));
+      intervalRef.current = null;
     }
-
-    console.log(timerState.state);
 
     if (timerState.state === "paused") {
-      stopTimer();
+      pauseTimer();
     }
 
-    if (timerState.state === "running") {
+    if (timerState.state === "running" && !intervalRef.current) {
       startTimer();
     }
-  }, [timerState.state]);
+  }, [timerState.state, timeRemaining]);
 
-  function handleStartStop() {
+  function handleStartPause() {
     setTimerState((prevState) =>
       prevState.state !== "running" ? { state: "running" } : { state: "paused" }
     );
@@ -72,15 +77,6 @@ function App() {
         ? newSessionLength
         : sessionLength
     );
-  }
-
-  function formatMmSs(t: number) {
-    const tAsDate = new Date(t);
-    const minutes = String(tAsDate.getMinutes()).padStart(2, "0");
-    const seconds = String(tAsDate.getSeconds()).padStart(2, "0");
-    const tFormatted = `${minutes}:${seconds}`;
-
-    return tFormatted;
   }
 
   return (
@@ -135,7 +131,7 @@ function App() {
       <section className="mt-3 flex flex-col items-center justify-center rounded-3xl border-4 px-6 pt-3 pb-5">
         <SectionLabel id="timer-label">Session</SectionLabel>
         <h3 id="time-left" className="text-7xl font-bold">
-          {formatMmSs(timeRemainingRef.current)}
+          {timeRemainingFormatted}
         </h3>
       </section>
 
@@ -145,7 +141,7 @@ function App() {
           <FontAwesomeIcon
             icon={timerIcon}
             size="xl"
-            onClick={handleStartStop}
+            onClick={handleStartPause}
           />
         </Button>
         <Button id="reset">
