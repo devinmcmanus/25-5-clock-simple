@@ -107,6 +107,18 @@ function App() {
     setTimeRemaining(25 * 60);
   }
 
+  /* Handle end of break */
+  if (timeRemaining <= 0 && timerStatus.mode.value === "break") {
+    setTimerStatus({ state: { value: "paused" }, mode: { value: "session" } });
+    setTimeRemaining(sessionLength * 60);
+  }
+
+  /* Handle end of session */
+  if (timeRemaining <= 0 && timerStatus.mode.value === "session") {
+    setTimerStatus({ state: { value: "paused" }, mode: { value: "break" } });
+    setTimeRemaining(breakLength * 60);
+  }
+
   return (
     <main className="flex h-screen flex-col items-center justify-center dark:bg-zinc-900 dark:text-gray-50">
       <h1 className="text-5xl font-bold">25 + 5 Clock</h1>
