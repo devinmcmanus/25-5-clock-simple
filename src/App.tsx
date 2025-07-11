@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowUp,
@@ -10,7 +11,74 @@ import "./App.css";
 import Button from "./components/Button";
 import SectionLabel from "./components/SectionLabel";
 
+type TimerState =
+  | { state: "initial" }
+  | { state: "running" }
+  | { state: "paused" }
+  | { state: "error" };
+
 function App() {
+  const [breakLength, setBreakLength] = useState(5);
+  const [sessionLength, setSessionLength] = useState(25);
+  const [timerState, setTimerState] = useState<TimerState>({
+    state: "initial",
+  });
+  const [timeRemaining, setTimeRemaining] = useState(sessionLength * 60);
+  const intervalRef = useRef<NodeJS.Timer>(null);
+  const timerIcon = timerState.state === "running" ? faPause : faPlay;
+  const minutes = Math.floor(timeRemaining / 60)
+    .toString()
+    .padStart(2, "0");
+  const seconds = Math.floor(timeRemaining % 60)
+    .toString()
+    .padStart(2, "0");
+  const timeRemainingFormatted = `${minutes}:${seconds}`;
+
+  useEffect(() => {
+    function startTimer() {
+      const id = setInterval(() => {
+        setTimeRemaining((t) => t - 1);
+      }, 1000);
+
+      intervalRef.current = id;
+    }
+
+    function pauseTimer() {
+      clearInterval(Number(intervalRef.current));
+      intervalRef.current = null;
+    }
+
+    if (timerState.state === "paused") {
+      pauseTimer();
+    }
+
+    if (timerState.state === "running" && !intervalRef.current) {
+      startTimer();
+    }
+  }, [timerState.state, timeRemaining]);
+
+  function handleStartPause() {
+    setTimerState((prevState) =>
+      prevState.state !== "running" ? { state: "running" } : { state: "paused" }
+    );
+  }
+
+  function handleChangeBreakLength(delta: number) {
+    const newBreakLength = breakLength + delta;
+    setBreakLength(
+      newBreakLength > 0 && newBreakLength <= 60 ? newBreakLength : breakLength
+    );
+  }
+
+  function handleChangeSessionLength(delta: number) {
+    const newSessionLength = sessionLength + delta;
+    setSessionLength(
+      newSessionLength > 0 && newSessionLength <= 60
+        ? newSessionLength
+        : sessionLength
+    );
+  }
+
   return (
     <main className="flex h-screen flex-col items-center justify-center dark:bg-zinc-900 dark:text-gray-50">
       <h1 className="text-5xl font-bold">25 + 5 Clock</h1>
@@ -20,28 +88,40 @@ function App() {
         <div>
           <SectionLabel id="break-label">Break Length</SectionLabel>
           <div className="flex items-center justify-center gap-2">
-            <Button id="break-decrement">
-              <FontAwesomeIcon icon={faArrowUp} size="xl" />
+            <Button
+              id="break-decrement"
+              onClick={() => handleChangeBreakLength(-1)}
+            >
+              <FontAwesomeIcon icon={faArrowDown} size="xl" />
             </Button>
             <span id="break-length" className="text-2xl">
-              5
+              {breakLength}
             </span>
-            <Button id="break-increment">
-              <FontAwesomeIcon icon={faArrowDown} size="xl" />
+            <Button
+              id="break-increment"
+              onClick={() => handleChangeBreakLength(1)}
+            >
+              <FontAwesomeIcon icon={faArrowUp} size="xl" />
             </Button>
           </div>
         </div>
         <div>
           <SectionLabel id="session-label">Session Length</SectionLabel>
           <div className="flex items-center justify-center gap-2">
-            <Button id="session-decrement">
-              <FontAwesomeIcon icon={faArrowUp} size="xl" />
+            <Button
+              id="session-decrement"
+              onClick={() => handleChangeSessionLength(-1)}
+            >
+              <FontAwesomeIcon icon={faArrowDown} size="xl" />
             </Button>
             <span id="session-length" className="text-2xl">
-              25
+              {sessionLength}
             </span>
-            <Button id="session-increment">
-              <FontAwesomeIcon icon={faArrowDown} size="xl" />
+            <Button
+              id="session-increment"
+              onClick={() => handleChangeSessionLength(1)}
+            >
+              <FontAwesomeIcon icon={faArrowUp} size="xl" />
             </Button>
           </div>
         </div>
@@ -51,15 +131,18 @@ function App() {
       <section className="mt-3 flex flex-col items-center justify-center rounded-3xl border-4 px-6 pt-3 pb-5">
         <SectionLabel id="timer-label">Session</SectionLabel>
         <h3 id="time-left" className="text-7xl font-bold">
-          25:00
+          {timeRemainingFormatted}
         </h3>
       </section>
 
       {/* Timer Controls */}
       <section className="mt-1 flex gap-2">
         <Button id="start_stop">
-          <FontAwesomeIcon icon={faPlay} size="xl" />
-          <FontAwesomeIcon icon={faPause} size="xl" />
+          <FontAwesomeIcon
+            icon={timerIcon}
+            size="xl"
+            onClick={handleStartPause}
+          />
         </Button>
         <Button id="reset">
           <FontAwesomeIcon icon={faRepeat} size="xl" />
