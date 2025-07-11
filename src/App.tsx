@@ -48,7 +48,7 @@ function App() {
       intervalRef.current = null;
     }
 
-    if (timerState.state === "paused") {
+    if (timerState.state === "paused" || timerState.state === "initial") {
       pauseTimer();
     }
 
@@ -77,6 +77,21 @@ function App() {
         ? newSessionLength
         : sessionLength
     );
+
+    if (timerState.state === "initial") {
+      setTimeRemaining(
+        newSessionLength > 0 && newSessionLength <= 60
+          ? newSessionLength * 60
+          : timeRemaining
+      );
+    }
+  }
+
+  function handleReset() {
+    setSessionLength(25);
+    setBreakLength(5);
+    setTimerState({ state: "initial" });
+    setTimeRemaining(25 * 60);
   }
 
   return (
@@ -144,7 +159,7 @@ function App() {
             onClick={handleStartPause}
           />
         </Button>
-        <Button id="reset">
+        <Button id="reset" onClick={handleReset}>
           <FontAwesomeIcon icon={faRepeat} size="xl" />
         </Button>
       </section>
