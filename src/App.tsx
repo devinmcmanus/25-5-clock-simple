@@ -110,6 +110,12 @@ function App() {
       mode: { value: "session" },
     });
     setTimeRemaining(25 * 60);
+
+    beepRef?.current?.pause();
+
+    if (beepRef.current.currentTime) {
+      beepRef.current.currentTime = 0;
+    }
   }
 
   /* Handle end of break */
