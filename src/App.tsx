@@ -69,10 +69,10 @@ function App() {
   }, [timerStatus.state.value, timeRemaining]);
 
   function handleStartPause() {
-    setTimerStatus((prevState) =>
-      prevState.state.value !== "running"
-        ? { ...prevState, state: { value: "running" } }
-        : { ...prevState, state: { value: "paused" } }
+    setTimerStatus((prevStatus: TimerStatus) =>
+      prevStatus.state.value !== "running"
+        ? { ...prevStatus, state: { value: "running" } }
+        : { ...prevStatus, state: { value: "paused" } }
     );
   }
 
@@ -112,16 +112,19 @@ function App() {
 
   /* Handle end of break */
   if (timeRemaining <= 0 && timerStatus.mode.value === "break") {
-    setTimerStatus({
-      state: { value: "paused" },
+    setTimerStatus((prevStatus: TimerStatus) => ({
+      ...prevStatus,
       mode: { value: "session" },
-    });
+    }));
     setTimeRemaining(sessionLength * 60);
   }
 
   /* Handle end of session */
   if (timeRemaining <= 0 && timerStatus.mode.value === "session") {
-    setTimerStatus({ state: { value: "paused" }, mode: { value: "break" } });
+    setTimerStatus((prevStatus: TimerStatus) => ({
+      ...prevStatus,
+      mode: { value: "break" },
+    }));
     setTimeRemaining(breakLength * 60);
   }
 
