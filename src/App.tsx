@@ -111,7 +111,7 @@ function App() {
   }
 
   /* Handle end of break */
-  if (timeRemaining <= 0 && timerStatus.mode.value === "break") {
+  if (timeRemaining < 0 && timerStatus.mode.value === "break") {
     setTimerStatus((prevStatus: TimerStatus) => ({
       ...prevStatus,
       mode: { value: "session" },
@@ -120,7 +120,7 @@ function App() {
   }
 
   /* Handle end of session */
-  if (timeRemaining <= 0 && timerStatus.mode.value === "session") {
+  if (timeRemaining < 0 && timerStatus.mode.value === "session") {
     setTimerStatus((prevStatus: TimerStatus) => ({
       ...prevStatus,
       mode: { value: "break" },
