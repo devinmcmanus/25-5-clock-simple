@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowUp,
@@ -103,13 +103,19 @@ function App() {
   function handleReset() {
     setSessionLength(25);
     setBreakLength(5);
-    setTimerStatus({ state: { value: "initial" }, mode: { value: "session" } });
+    setTimerStatus({
+      state: { value: "initial" },
+      mode: { value: "session" },
+    });
     setTimeRemaining(25 * 60);
   }
 
   /* Handle end of break */
   if (timeRemaining <= 0 && timerStatus.mode.value === "break") {
-    setTimerStatus({ state: { value: "paused" }, mode: { value: "session" } });
+    setTimerStatus({
+      state: { value: "paused" },
+      mode: { value: "session" },
+    });
     setTimeRemaining(sessionLength * 60);
   }
 
@@ -179,12 +185,8 @@ function App() {
 
       {/* Timer Controls */}
       <section className="mt-1 flex gap-2">
-        <Button id="start_stop">
-          <FontAwesomeIcon
-            icon={timerIcon}
-            size="xl"
-            onClick={handleStartPause}
-          />
+        <Button id="start_stop" onClick={handleStartPause}>
+          <FontAwesomeIcon icon={timerIcon} size="xl" />
         </Button>
         <Button id="reset" onClick={handleReset}>
           <FontAwesomeIcon icon={faRepeat} size="xl" />
