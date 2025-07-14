@@ -130,6 +130,11 @@ function App() {
     setTimeRemaining(breakLength * 60);
   }
 
+  /* Play beep when timer reaches 0 */
+  if (timeRemaining === 0) {
+    beepRef?.current?.play();
+  }
+
   return (
     <main className="flex h-screen flex-col items-center justify-center dark:bg-zinc-900 dark:text-gray-50">
       <h1 className="text-5xl font-bold">25 + 5 Clock</h1>
