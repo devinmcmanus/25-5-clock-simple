@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowUp,
@@ -12,20 +12,28 @@ import Button from "./components/Button";
 import SectionLabel from "./components/SectionLabel";
 
 type TimerState =
-  | { state: "initial" }
-  | { state: "running" }
-  | { state: "paused" }
-  | { state: "error" };
+  | { value: "initial" }
+  | { value: "running" }
+  | { value: "paused" }
+  | { value: "error" };
+
+type TimerMode = { value: "session" } | { value: "break" };
+
+type TimerStatus = {
+  state: TimerState;
+  mode: TimerMode;
+};
 
 function App() {
   const [breakLength, setBreakLength] = useState(5);
   const [sessionLength, setSessionLength] = useState(25);
-  const [timerState, setTimerState] = useState<TimerState>({
-    state: "initial",
+  const [timerStatus, setTimerStatus] = useState<TimerStatus>({
+    state: { value: "initial" },
+    mode: { value: "session" },
   });
   const [timeRemaining, setTimeRemaining] = useState(sessionLength * 60);
   const intervalRef = useRef<NodeJS.Timer>(null);
-  const timerIcon = timerState.state === "running" ? faPause : faPlay;
+  const timerIcon = timerStatus.state.value === "running" ? faPause : faPlay;
   const minutes = Math.floor(timeRemaining / 60)
     .toString()
     .padStart(2, "0");
@@ -48,18 +56,23 @@ function App() {
       intervalRef.current = null;
     }
 
-    if (timerState.state === "paused" || timerState.state === "initial") {
+    if (
+      timerStatus.state.value === "paused" ||
+      timerStatus.state.value === "initial"
+    ) {
       pauseTimer();
     }
 
-    if (timerState.state === "running" && !intervalRef.current) {
+    if (timerStatus.state.value === "running" && !intervalRef.current) {
       startTimer();
     }
-  }, [timerState.state, timeRemaining]);
+  }, [timerStatus.state.value, timeRemaining]);
 
   function handleStartPause() {
-    setTimerState((prevState) =>
-      prevState.state !== "running" ? { state: "running" } : { state: "paused" }
+    setTimerStatus((prevStatus: TimerStatus) =>
+      prevStatus.state.value !== "running"
+        ? { ...prevStatus, state: { value: "running" } }
+        : { ...prevStatus, state: { value: "paused" } }
     );
   }
 
@@ -78,7 +91,7 @@ function App() {
         : sessionLength
     );
 
-    if (timerState.state === "initial") {
+    if (timerStatus.state.value === "initial") {
       setTimeRemaining(
         newSessionLength > 0 && newSessionLength <= 60
           ? newSessionLength * 60
@@ -90,8 +103,29 @@ function App() {
   function handleReset() {
     setSessionLength(25);
     setBreakLength(5);
-    setTimerState({ state: "initial" });
+    setTimerStatus({
+      state: { value: "initial" },
+      mode: { value: "session" },
+    });
     setTimeRemaining(25 * 60);
+  }
+
+  /* Handle end of break */
+  if (timeRemaining < 0 && timerStatus.mode.value === "break") {
+    setTimerStatus((prevStatus: TimerStatus) => ({
+      ...prevStatus,
+      mode: { value: "session" },
+    }));
+    setTimeRemaining(sessionLength * 60);
+  }
+
+  /* Handle end of session */
+  if (timeRemaining < 0 && timerStatus.mode.value === "session") {
+    setTimerStatus((prevStatus: TimerStatus) => ({
+      ...prevStatus,
+      mode: { value: "break" },
+    }));
+    setTimeRemaining(breakLength * 60);
   }
 
   return (
@@ -144,7 +178,9 @@ function App() {
 
       {/* Timer Display */}
       <section className="mt-3 flex flex-col items-center justify-center rounded-3xl border-4 px-6 pt-3 pb-5">
-        <SectionLabel id="timer-label">Session</SectionLabel>
+        <SectionLabel id="timer-label">
+          {timerStatus.mode.value === "session" ? "Session" : "Break"}
+        </SectionLabel>
         <h3 id="time-left" className="text-7xl font-bold">
           {timeRemainingFormatted}
         </h3>
@@ -152,12 +188,8 @@ function App() {
 
       {/* Timer Controls */}
       <section className="mt-1 flex gap-2">
-        <Button id="start_stop">
-          <FontAwesomeIcon
-            icon={timerIcon}
-            size="xl"
-            onClick={handleStartPause}
-          />
+        <Button id="start_stop" onClick={handleStartPause}>
+          <FontAwesomeIcon icon={timerIcon} size="xl" />
         </Button>
         <Button id="reset" onClick={handleReset}>
           <FontAwesomeIcon icon={faRepeat} size="xl" />
