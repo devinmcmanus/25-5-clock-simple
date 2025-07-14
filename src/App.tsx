@@ -10,6 +10,7 @@ import {
 import "./App.css";
 import Button from "./components/Button";
 import SectionLabel from "./components/SectionLabel";
+import beepSound from "./assets/beep-alarm-366507.mp3";
 
 type TimerState =
   | { value: "initial" }
@@ -33,6 +34,7 @@ function App() {
   });
   const [timeRemaining, setTimeRemaining] = useState(sessionLength * 60);
   const intervalRef = useRef<NodeJS.Timer>(null);
+  const beepRef = useRef(null);
   const timerIcon = timerStatus.state.value === "running" ? faPause : faPlay;
   const minutes = Math.floor(timeRemaining / 60)
     .toString()
@@ -195,6 +197,10 @@ function App() {
           <FontAwesomeIcon icon={faRepeat} size="xl" />
         </Button>
       </section>
+      <audio id="beep" ref={beepRef}>
+        <source src={beepSound} type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
     </main>
   );
 }
